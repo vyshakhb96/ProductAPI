@@ -52,6 +52,19 @@ namespace TestProductAPI
             Assert.Equal(1, result.Response.Count);
         }
 
+
+        [Fact]
+        public void GetAllShouldReturnNotFound()
+        {
+            var storageMock = new Mock<IProductStorageManager>();
+            List<ProductListItem> businessResponse = new List<ProductListItem>();
+            storageMock.Setup(x => x.GetAll()).Returns(businessResponse);
+
+            ProductBusiness productBusiness = new ProductBusiness(storageMock.Object);
+            var result = productBusiness.GetAllProducts();
+            Assert.NotNull(result);
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, result.StatusCode);
+        }
         [Fact]
         public void GetShouldReturnProduct()
         {
@@ -111,6 +124,36 @@ namespace TestProductAPI
 
             Assert.NotNull(result);
             Assert.Equal(true, result.Response);
+        }
+
+        [Fact]
+        public void DeleteShouldReturnBadRequest()
+        {
+            var storageMock = new Mock<IProductStorageManager>();
+            ProductDetails productDetails = new ProductDetails();
+            storageMock.Setup(x => x.Delete(It.IsAny<string>())).Returns(false);
+
+            ProductBusiness productBusiness = new ProductBusiness(storageMock.Object);
+            string IdTest = "";
+            var result = productBusiness.DeleteProduct(IdTest);
+
+            Assert.NotNull(result);
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Fact]
+        public void DeleteShouldReturnNotFound()
+        {
+            var storageMock = new Mock<IProductStorageManager>();
+            ProductDetails productDetails = new ProductDetails();
+            storageMock.Setup(x => x.Delete(It.IsAny<string>())).Returns(true);
+
+            ProductBusiness productBusiness = new ProductBusiness(storageMock.Object);
+            string IdTest = "28";
+            var result = productBusiness.DeleteProduct(IdTest);
+
+            Assert.NotNull(result);
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, result.StatusCode);
         }
     }
 }
