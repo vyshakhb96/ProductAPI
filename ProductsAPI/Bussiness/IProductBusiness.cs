@@ -6,7 +6,7 @@ namespace ProductsAPI.Bussiness
     {
         BusinessResponse<bool> AddProduct(ProductDetails product);
         BusinessResponse<List<ProductListItem>> GetAllProducts();
-        BusinessResponse<ProductDetails> GetProductDetails(int Id);
-        BusinessResponse<bool> DeleteProduct(int Id);
+        BusinessResponse<ProductDetails> GetProductDetails(string Id);
+        BusinessResponse<bool> DeleteProduct(string Id);
     }
 }

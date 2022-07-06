@@ -12,7 +12,7 @@ namespace ProductsAPI.DataManager
             return true;
         }
 
-        public static ProductDetails GetProduct(int Id)
+        public static ProductDetails GetProduct(string Id)
         {
             ProductDetails product = products.FirstOrDefault(x => x.ID == Id);
 
@@ -25,12 +25,10 @@ namespace ProductsAPI.DataManager
         }
         public static List<ProductListItem> GetAll()
         {
-            List<ProductListItem> list = new List<ProductListItem>();
-            list = products.Select(x => new ProductListItem { Id = x.ID, Name = x.Name }).ToList();
-
+            List<ProductListItem> list = products.Select(x => new ProductListItem { Id = x.ID, Name = x.Name }).ToList();
             return list;
         }
-        public static bool Delete(int Id)
+        public static bool Delete(string Id)
         {
             products.Remove(GetProduct(Id));
             return true;

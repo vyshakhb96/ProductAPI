@@ -14,11 +14,11 @@ namespace ProductsAPI.DataManager
             return DataHelper.GetAll();
         }
 
-        public ProductDetails GetProduct(int Id)
+        public ProductDetails GetProduct(string Id)
         {
             return DataHelper.GetProduct(Id);
         }
-        public bool Delete(int Id)
+        public bool Delete(string Id)
         {
             return DataHelper.Delete(Id);
         }

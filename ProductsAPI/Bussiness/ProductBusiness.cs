@@ -5,40 +5,42 @@ namespace ProductsAPI.Bussiness
 {
     public class ProductBusiness : IProductBusiness
     {
-        ProductStorageManager productstorage = new ProductStorageManager();
+        private readonly  IProductStorageManager productstorage;
+        public ProductBusiness(IProductStorageManager productStorageManager )
+        {
+            this.productstorage = productStorageManager;
+        }
+       
         public BusinessResponse<bool> AddProduct(ProductDetails product)
         {
             BusinessResponse<bool> response = new BusinessResponse<bool>();
-            int count = DataHelper.GetAll().Count;
-            product.ID = count + 1;
+            int count = DataHelper.GetAll().Count;          
             if (product == null)
             {
                 response.StatusCode = System.Net.HttpStatusCode.BadRequest;
                 response.Message = "Product cannot be null";
                 return response;
             }
-            var existingProduct = GetProductDetails(product.ID);
-            if (existingProduct.StatusCode == System.Net.HttpStatusCode.OK)
+            else
             {
-                response.StatusCode = System.Net.HttpStatusCode.BadRequest;
-                response.Message = "Product Exists";
+                product.ID = Convert.ToString(count + 1);
+                response.Response = productstorage.Add(product);
+                response.StatusCode = System.Net.HttpStatusCode.OK;
                 return response;
             }
-            response.Response = productstorage.Add(product);
-            response.StatusCode = System.Net.HttpStatusCode.OK;
-            return response;
+
         }
 
         public BusinessResponse<List<ProductListItem>> GetAllProducts()
         {
             BusinessResponse<List<ProductListItem>> response = new BusinessResponse<List<ProductListItem>>();
-            List<ProductListItem> products = new List<ProductListItem>();          
-            if (DataHelper.GetAll().Count > 0)
+            //List<ProductListItem> products = new List<ProductListItem>();
+           var products = productstorage.GetAll();
+            if (products.Count > 0)
             {
                 response.StatusCode = System.Net.HttpStatusCode.OK;
-                response.Response = productstorage.GetAll();
+                response.Response = products;
                 return response;
-                //return productstorage.GetAll();
             }
             else
             {
@@ -48,17 +50,17 @@ namespace ProductsAPI.Bussiness
             }              
         }
 
-        public BusinessResponse<ProductDetails> GetProductDetails(int Id)
+        public BusinessResponse<ProductDetails> GetProductDetails(string Id)
         {
             BusinessResponse<ProductDetails> details = new BusinessResponse<ProductDetails>();
-            if (Id == null)
+            if (string.IsNullOrEmpty(Id))
             {
+                
                 details.StatusCode = System.Net.HttpStatusCode.BadRequest;
                 details.Message = "Id cannot be null";
                 return details;
             }
-            if (Id != null)
-            {
+                       
                 details.Response = productstorage.GetProduct(Id);
                 if (details.Response != null)
                 {
@@ -68,26 +70,24 @@ namespace ProductsAPI.Bussiness
                 }
                 else
                 {
-                    details.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                    details.StatusCode = System.Net.HttpStatusCode.NotFound;
                     details.Message = "No product exists!";
                     return details;
                 }                  
-            }
-            else
-                return null;
+            
         }
 
-        public BusinessResponse<bool> DeleteProduct(int Id)
+        public BusinessResponse<bool> DeleteProduct(string Id)
         {
             BusinessResponse<bool> response = new BusinessResponse<bool>();
             if (Id == null)
             {
                 response.StatusCode = System.Net.HttpStatusCode.BadRequest;
-                response.Message = "Product cannot be null";
+                response.Message = "Id cannot be null";
                 return response;
             }
             var existingProduct = GetProductDetails(Id);
-            if (existingProduct.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if (existingProduct.Response == null)
             {
                 response.StatusCode = System.Net.HttpStatusCode.BadRequest;
                 response.Message = "No Product Exists";

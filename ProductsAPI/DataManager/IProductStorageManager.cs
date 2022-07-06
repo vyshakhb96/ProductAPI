@@ -5,9 +5,9 @@ namespace ProductsAPI.DataManager
     public interface IProductStorageManager
     {
         bool Add(ProductDetails product);
-        ProductDetails GetProduct(int Id);
+        ProductDetails GetProduct(string Id);
         List<ProductListItem> GetAll();
-        bool Delete(int Id);
+        bool Delete(string Id);
 
     }
 }

@@ -42,7 +42,7 @@ namespace ProductsAPI.Controllers
 
         // GET api/<ProductController>/5
         [HttpGet("{id}")]
-        public IActionResult GetProductDetails(int id)
+        public IActionResult GetProductDetails(string id)
         {
             var singleResult = productbusiness.GetProductDetails(id);
             if (singleResult.StatusCode == System.Net.HttpStatusCode.OK)
@@ -56,7 +56,7 @@ namespace ProductsAPI.Controllers
 
         // DELETE api/<ProductController>/5
         [HttpDelete("{id}")]
-        public IActionResult DeleteProduct(int id)
+        public IActionResult DeleteProduct(string id)
         {
             var response = productbusiness.DeleteProduct(id);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
